@@ -158,7 +158,14 @@ static int mxs_mmc_get_ro(struct mmc_host *mmc)
 /* Detect if card is plugged */
 static inline int mxs_mmc_is_plugged(struct mxs_mmc_host *host)
 {
-	u32 status = __raw_readl(host->ssp_base + HW_SSP_STATUS);
+	u32 status;
+
+	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
+		return 1;
+
+	status = __raw_readl(host->ssp_base + HW_SSP_STATUS);
+	//~ printk(KERN_ERR "*** base = %x, card status = %x (%x)\n",
+		//~ host->ssp_base, status, status & BM_SSP_STATUS_CARD_DETECT);
 	return !(status & BM_SSP_STATUS_CARD_DETECT);
 }
 
