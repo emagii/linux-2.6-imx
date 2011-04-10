@@ -484,6 +484,12 @@ static int mxs_i2c_probe(struct platform_device *pdev)
 	mxs_i2c->flags = pdata->pioqueue_mode ?
 	    MXS_I2C_PIOQUEUE_MODE : MXS_I2C_DMA_MODE;
 
+	INIT_WORK(&mxs_i2c->work, mxs_i2c_task);
+
+	/* Disable all interrupts */
+	__raw_writel(0x0000FF00, mxs_i2c->regbase + HW_I2C_CTRL1_CLR);
+	__raw_writel(0x000000FF, mxs_i2c->regbase + HW_I2C_CTRL1_CLR);
+
 	err =
 	    request_irq(mxs_i2c->irq_err, mxs_i2c_isr, 0, pdev->name, mxs_i2c);
 	if (err) {
@@ -535,8 +541,6 @@ static int mxs_i2c_probe(struct platform_device *pdev)
 		goto no_i2c_adapter;
 
 	}
-
-	INIT_WORK(&mxs_i2c->work, mxs_i2c_task);
 
 	return 0;
 
