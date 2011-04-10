@@ -79,6 +79,7 @@ struct utp_msg {
 		u64 param;
 	};
 };
+#pragma pack()
 
 enum utp_msg_type {
 	UTP_POLL = 0,
@@ -117,6 +118,8 @@ static struct miscdevice utp_dev = {
 #define UTP_FLAG_DATA		0x00000002
 #define UTP_FLAG_STATUS		0x00000004
 #define UTP_FLAG_REPORT_BUSY	0x10000000
+
+#pragma pack(1)
 struct utp_message {
 	u32 	flags;
 	size_t 	size;
