@@ -1498,10 +1498,12 @@ fec_probe(struct platform_device *pdev)
 	clk_enable(fep->clk);
 
 	/* PHY reset should be done during clock on */
-	if (pdata && pdata->init)
-	ret = pdata->init();
-	if (ret)
-		goto failed_platform_init;
+	if (pdata && pdata->init) {
+		ret = pdata->init();
+		if (ret)
+			goto failed_platform_init;
+	}
+
 	/*
 	 * The priority for getting MAC address is:
 	 * (1) kernel command line fec_mac = xx:xx:xx...
