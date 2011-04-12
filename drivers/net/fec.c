@@ -727,9 +727,17 @@ static int fec_enet_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
 	time_left = wait_for_completion_timeout(&fep->mdio_done,
 		usecs_to_jiffies(FEC_MII_TIMEOUT));
 	if (time_left == 0) {
-		fep->mii_timeout = 1;
-		printk(KERN_ERR "FEC: MDIO read timeout\n");
-		return -ETIMEDOUT;
+		/*
+		 * Check for irq received. There seems to be a problem
+		 * after reset that MII irqs are not seen
+		 */
+		if (!(readl(fep->hwp + FEC_IEVENT) & FEC_ENET_MII)) {
+			fep->mii_timeout = 1;
+			printk(KERN_ERR "FEC: MDIO read timeout\n");
+			return -ETIMEDOUT;
+		}
+
+		writel(FEC_ENET_MII, fep->hwp + FEC_IEVENT);
 	}
 	/* return value */
 	return FEC_MMFR_DATA(readl(fep->hwp + FEC_MII_DATA));
