@@ -421,7 +421,7 @@ static void mx28_init_gpmi_nfc(void)
 #endif
 
 #if defined(CONFIG_MMC_MXS) || defined(CONFIG_MMC_MXS_MODULE)
-#if defined(CONFIG_MACH_MX28EVK)
+#if defined(CONFIG_MACH_MX28EVK) || defined(CONFIG_MACH_MBA28)
 #define MMC0_POWER	MXS_PIN_TO_GPIO(PINID_PWM3)
 #define MMC1_POWER	MXS_PIN_TO_GPIO(PINID_PWM4)
 #define MMC0_WP		MXS_PIN_TO_GPIO(PINID_SSP1_SCK)
