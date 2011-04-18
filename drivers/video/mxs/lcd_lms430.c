@@ -96,7 +96,7 @@ static int init_panel(struct device *dev, dma_addr_t phys, int memsize,
 	setup_dotclk_panel(DOTCLK_V_PULSE_WIDTH, DOTCLK_V_PERIOD,
 			   DOTCLK_V_WAIT_CNT, DOTCLK_V_ACTIVE,
 			   DOTCLK_H_PULSE_WIDTH, DOTCLK_H_PERIOD,
-			   DOTCLK_H_WAIT_CNT, DOTCLK_H_ACTIVE, 0);
+			   DOTCLK_H_WAIT_CNT, DOTCLK_H_ACTIVE, 3, 0);
 
 	ret = mxs_lcdif_dma_init(dev, phys, memsize);
 	if (ret)

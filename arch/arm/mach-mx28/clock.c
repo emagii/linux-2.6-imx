@@ -1148,9 +1148,15 @@ static int lcdif_set_rate(struct clk *clk, unsigned long rate)
 {
 	int reg_val;
 
+#ifdef CONFIG_FB_MXS_LCD_FG0700
+	int div = 15;
+#else
+	int div = 1;
+#endif
+
 	reg_val = __raw_readl(clk->scale_reg);
 	reg_val &= ~(BM_CLKCTRL_DIS_LCDIF_DIV | BM_CLKCTRL_DIS_LCDIF_CLKGATE);
-	reg_val |= (1 << BP_CLKCTRL_DIS_LCDIF_DIV) & BM_CLKCTRL_DIS_LCDIF_DIV;
+	reg_val |= (div << BP_CLKCTRL_DIS_LCDIF_DIV) & BM_CLKCTRL_DIS_LCDIF_DIV;
 	__raw_writel(reg_val, clk->scale_reg);
 	if (clk->busy_reg) {
 		int i;
@@ -1161,9 +1167,11 @@ static int lcdif_set_rate(struct clk *clk, unsigned long rate)
 			return -ETIMEDOUT;
 	}
 
+#ifndef CONFIG_FB_MXS_LCD_FG0700
 	reg_val = __raw_readl(CLKCTRL_BASE_ADDR + HW_CLKCTRL_CLKSEQ);
 	reg_val |= BM_CLKCTRL_CLKSEQ_BYPASS_DIS_LCDIF;
 	__raw_writel(reg_val, CLKCTRL_BASE_ADDR + HW_CLKCTRL_CLKSEQ);
+#endif
 
 	return 0;
 }
@@ -1180,7 +1188,7 @@ static int lcdif_set_parent(struct clk *clk, struct clk *parent)
 			ret = 0;
 		}
 		if (ret && (parent == &ref_pix_clk)) {
-			__raw_writel(0 << clk->bypass_bits,
+			__raw_writel(1 << clk->bypass_bits,
 				clk->bypass_reg + CLR_REGISTER);
 			ret = 0;
 		}

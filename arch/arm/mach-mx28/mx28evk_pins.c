@@ -400,6 +400,24 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .voltage = PAD_3_3V,
 	 .drive	= 1,
 	 },
+#ifdef CONFIG_MACH_MBA28
+	{
+	 .name = "LCD_ENABLE",
+	 .id = PINID_LCD_ENABLE,
+	 .fun = PIN_FUN1,
+	 .strength = PAD_8MA,
+	 .voltage = PAD_3_3V,
+	 .drive	= 1,
+	 },
+	{
+	 .name = "LCD_DOTCLK",
+	 .id = PINID_LCD_DOTCK,
+	 .fun = PIN_FUN1,
+	 .strength = PAD_8MA,
+	 .voltage = PAD_3_3V,
+	 .drive	= 1,
+	 },
+#else
 	{
 	 .name = "LCD_ENABLE",
 	 .id = PINID_LCD_CS,
@@ -416,6 +434,7 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .voltage = PAD_3_3V,
 	 .drive	= 1,
 	 },
+#endif
 	{
 	 .name = "LCD_BACKLIGHT",
 	 .id = PINID_PWM2,

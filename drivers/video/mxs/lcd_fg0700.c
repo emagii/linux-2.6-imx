@@ -1,5 +1,5 @@
 /*
- * Freescale MX28 Seiko 43WVF1G LCD panel driver
+ * Freescale MX28 Data Image FG0700K5DSSWBG01 LCD panel driver
  *
  * Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
  *
@@ -31,43 +31,57 @@
 #include <mach/system.h>
 
 #define DOTCLK_H_ACTIVE  800
-#define DOTCLK_H_PULSE_WIDTH 10
-#define DOTCLK_HF_PORCH  164
-#define DOTCLK_HB_PORCH  89
+#define DOTCLK_H_PULSE_WIDTH 20
+#define DOTCLK_HF_PORCH  20
+#define DOTCLK_HB_PORCH  216
 #define DOTCLK_H_WAIT_CNT  (DOTCLK_H_PULSE_WIDTH + DOTCLK_HB_PORCH)
 #define DOTCLK_H_PERIOD (DOTCLK_H_WAIT_CNT + DOTCLK_HF_PORCH + DOTCLK_H_ACTIVE)
 
 #define DOTCLK_V_ACTIVE  480
 #define DOTCLK_V_PULSE_WIDTH  10
-#define DOTCLK_VF_PORCH  10
-#define DOTCLK_VB_PORCH  23
+#define DOTCLK_VF_PORCH  5
+#define DOTCLK_VB_PORCH  30
 #define DOTCLK_V_WAIT_CNT (DOTCLK_V_PULSE_WIDTH + DOTCLK_VB_PORCH)
 #define DOTCLK_V_PERIOD (DOTCLK_VF_PORCH + DOTCLK_V_ACTIVE + DOTCLK_V_WAIT_CNT)
 
 static struct mxs_platform_bl_data bl_data;
-static struct clk *lcd_clk;
+static struct clk *lcd_clk, *ref_clk;
 
 static int init_panel(struct device *dev, dma_addr_t phys, int memsize,
 		      struct mxs_platform_fb_entry *pentry)
 {
 	int ret = 0;
-	lcd_clk = clk_get(dev, "dis_lcdif");
-	if (IS_ERR(lcd_clk)) {
-		ret = PTR_ERR(lcd_clk);
-		goto out;
-	}
-	ret = clk_enable(lcd_clk);
-	if (ret) {
-		clk_put(lcd_clk);
+
+	ref_clk = clk_get(dev, "ref_pix");
+	if (IS_ERR(ref_clk)) {
+		ret = PTR_ERR(ref_clk);
 		goto out;
 	}
 
-	ret = clk_set_rate(lcd_clk, 1000000 / pentry->cycle_time_ns);	/* kHz */
-	if (ret) {
-		clk_disable(lcd_clk);
-		clk_put(lcd_clk);
-		goto out;
+	lcd_clk = clk_get(dev, "dis_lcdif");
+	if (IS_ERR(lcd_clk)) {
+		ret = PTR_ERR(lcd_clk);
+		goto out1;
 	}
+	ret = clk_set_parent(lcd_clk, ref_clk);
+	if (ret)
+		goto out2;
+
+	ret = clk_set_rate(ref_clk, 479999988);
+	if (ret)
+		goto out2;
+
+	ret = clk_enable(ref_clk);
+	if (ret)
+		goto out2;
+
+	ret = clk_enable(lcd_clk);
+	if (ret)
+		goto out3;
+
+	ret = clk_set_rate(lcd_clk, 1000000 / pentry->cycle_time_ns);	/* kHz */
+	if (ret)
+		goto out3;
 
 	/*
 	 * Make sure we do a high-to-low transition to reset the panel.
@@ -91,16 +105,24 @@ static int init_panel(struct device *dev, dma_addr_t phys, int memsize,
 	setup_dotclk_panel(DOTCLK_V_PULSE_WIDTH, DOTCLK_V_PERIOD,
 			   DOTCLK_V_WAIT_CNT, DOTCLK_V_ACTIVE,
 			   DOTCLK_H_PULSE_WIDTH, DOTCLK_H_PERIOD,
-			   DOTCLK_H_WAIT_CNT, DOTCLK_H_ACTIVE, 3, 0);
+			   DOTCLK_H_WAIT_CNT, DOTCLK_H_ACTIVE, 2, 0);
 
 	ret = mxs_lcdif_dma_init(dev, phys, memsize);
 	if (ret)
-		goto out;
+		goto out4;
 
 	mxs_lcd_set_bl_pdata(pentry->bl_data);
 	mxs_lcdif_notify_clients(MXS_LCDIF_PANEL_INIT, pentry);
 	return 0;
 
+out4:
+	clk_disable(lcd_clk);
+out3:
+	clk_disable(ref_clk);
+out2:
+	clk_put(lcd_clk);
+out1:
+	clk_put(ref_clk);
 out:
 	return ret;
 }
@@ -112,7 +134,9 @@ static void release_panel(struct device *dev,
 	release_dotclk_panel();
 	mxs_lcdif_dma_release();
 	clk_disable(lcd_clk);
+	clk_disable(ref_clk);
 	clk_put(lcd_clk);
+	clk_put(ref_clk);
 }
 
 static int blank_panel(int blank)
@@ -146,7 +170,7 @@ static int blank_panel(int blank)
 }
 
 static struct mxs_platform_fb_entry fb_entry = {
-	.name = "43wvf1g",
+	.name = "fg0700",
 	.x_res = 480,
 	.y_res = 800,
 	.bpp = 32,
@@ -178,7 +202,7 @@ static int init_bl(struct mxs_platform_bl_data *data)
 	__raw_writel(BF_PWM_ACTIVEn_INACTIVE(0) |
 		     BF_PWM_ACTIVEn_ACTIVE(0),
 		     REGS_PWM_BASE + HW_PWM_ACTIVEn(2));
-	__raw_writel(BF_PWM_PERIODn_CDIV(6) |	/* divide by 64 */
+	__raw_writel(BF_PWM_PERIODn_CDIV(2) |	/* divide by 64 */
 		     BF_PWM_PERIODn_INACTIVE_STATE(2) |	/* low */
 		     BF_PWM_PERIODn_ACTIVE_STATE(3) |	/* high */
 		     BF_PWM_PERIODn_PERIOD(599),
@@ -193,7 +217,7 @@ static void free_bl(struct mxs_platform_bl_data *data)
 	__raw_writel(BF_PWM_ACTIVEn_INACTIVE(0) |
 		     BF_PWM_ACTIVEn_ACTIVE(0),
 		     REGS_PWM_BASE + HW_PWM_ACTIVEn(2));
-	__raw_writel(BF_PWM_PERIODn_CDIV(6) |	/* divide by 64 */
+	__raw_writel(BF_PWM_PERIODn_CDIV(2) |	/* divide by 64 */
 		     BF_PWM_PERIODn_INACTIVE_STATE(2) |	/* low */
 		     BF_PWM_PERIODn_ACTIVE_STATE(3) |	/* high */
 		     BF_PWM_PERIODn_PERIOD(599),
@@ -254,13 +278,13 @@ static int set_bl_intensity(struct mxs_platform_bl_data *data,
 		scaled_int += rem * (values[intensity / 10 + 1] -
 				     values[intensity / 10]) / 10;
 	}
-	__raw_writel(BF_PWM_ACTIVEn_INACTIVE(scaled_int) |
+	__raw_writel(BF_PWM_ACTIVEn_INACTIVE(scaled_int*3) |
 		     BF_PWM_ACTIVEn_ACTIVE(0),
 		     REGS_PWM_BASE + HW_PWM_ACTIVEn(2));
-	__raw_writel(BF_PWM_PERIODn_CDIV(6) |	/* divide by 64 */
+	__raw_writel(BF_PWM_PERIODn_CDIV(2) |	/* divide by 64 */
 		     BF_PWM_PERIODn_INACTIVE_STATE(2) |	/* low */
 		     BF_PWM_PERIODn_ACTIVE_STATE(3) |	/* high */
-		     BF_PWM_PERIODn_PERIOD(399),
+		     BF_PWM_PERIODn_PERIOD(299),
 		     REGS_PWM_BASE + HW_PWM_PERIODn(2));
 	return 0;
 }

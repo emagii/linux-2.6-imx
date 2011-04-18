@@ -162,7 +162,9 @@ static inline void setup_dotclk_panel(u16 v_pulse_width,
 				      u16 h_pulse_width,
 				      u16 h_period,
 				      u16 h_wait_cnt,
-				      u16 h_active, int enable_present)
+				      u16 h_active,
+				      u16 lcd_databus_width,
+				      int enable_present)
 {
 	u32 val;
 
@@ -203,7 +205,7 @@ static inline void setup_dotclk_panel(u16 v_pulse_width,
 	__raw_writel(BF_LCDIF_CTRL_WORD_LENGTH(3) |	/* 24 bit */
 		     BM_LCDIF_CTRL_DATA_SELECT |	/* data mode */
 		     BF_LCDIF_CTRL_INPUT_DATA_SWIZZLE(0) |	/* no swap */
-		     BF_LCDIF_CTRL_LCD_DATABUS_WIDTH(3),	/* 24 bit */
+		     BF_LCDIF_CTRL_LCD_DATABUS_WIDTH(lcd_databus_width),
 		     REGS_LCDIF_BASE + HW_LCDIF_CTRL_SET);
 
 	val = __raw_readl(REGS_LCDIF_BASE + HW_LCDIF_VDCTRL0);

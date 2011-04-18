@@ -14,6 +14,10 @@ config FB_MXS_LCD_43WVF1G
 	tristate "SEIKO 4.3' LCD WVGA(800x480) PANEL"
 	default y if ARCH_MX28
 
+config FB_MXS_LCD_FG0700
+	depends on FB_MXS
+	tristate "DATA IMAGE LCD WVGA(800x480) PANEL"
+
 config FB_MXS_LCD_LMS430
 	depends on FB_MXS
 	bool "LMS430"
