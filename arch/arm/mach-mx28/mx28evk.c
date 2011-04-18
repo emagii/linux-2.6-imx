@@ -23,6 +23,7 @@
 #include <linux/clk.h>
 #include <linux/platform_device.h>
 #include <linux/i2c.h>
+#include <linux/i2c/at24.h>
 
 #include <asm/setup.h>
 #include <asm/mach-types.h>
@@ -41,6 +42,22 @@
 #include "device.h"
 #include "mx28evk.h"
 
+#ifdef CONFIG_MACH_MBA28
+static struct at24_platform_data eeprom_info = {
+	.byte_len       = (64*1024) / 8,
+	.page_size      = 32,
+	.flags          = AT24_FLAG_ADDR16,
+};
+
+static struct i2c_board_info __initdata mxs_i2c_device[] = {
+	{ I2C_BOARD_INFO("24c64", 0x50), .platform_data  = &eeprom_info}
+};
+
+static void __init i2c_device_init(void)
+{
+	i2c_register_board_info(1, mxs_i2c_device, ARRAY_SIZE(mxs_i2c_device));
+}
+#else
 static struct i2c_board_info __initdata mxs_i2c_device[] = {
 	{ I2C_BOARD_INFO("sgtl5000-i2c", 0xa), .flags = I2C_M_TEN }
 };
@@ -49,6 +66,8 @@ static void __init i2c_device_init(void)
 {
 	i2c_register_board_info(0, mxs_i2c_device, ARRAY_SIZE(mxs_i2c_device));
 }
+#endif
+
 #if defined(CONFIG_MTD_M25P80) || defined(CONFIG_MTD_M25P80_MODULE)
 static struct flash_platform_data mx28_spi_flash_data = {
 	.name = "m25p80",
