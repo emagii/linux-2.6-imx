@@ -60,6 +60,18 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .fun   = PIN_FUN1,
 	 },
 #endif
+#ifdef CONFIG_MXS_AUART1_DEVICE_ENABLE
+	{
+	 .name  = "AUART1.RX",
+	 .id    = PINID_AUART1_RX,
+	 .fun   = PIN_FUN1,
+	 },
+	{
+	 .name  = "AUART1.TX",
+	 .id    = PINID_AUART1_TX,
+	 .fun   = PIN_FUN1,
+	 },
+#endif
 #ifdef CONFIG_MXS_AUART3_DEVICE_ENABLE
 	{
 	 .name  = "AUART3.RX",
@@ -82,7 +94,29 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .fun   = PIN_FUN1,
 	 },
 #endif
+#ifdef CONFIG_MXS_AUART4_DEVICE_ENABLE
 	{
+	 .name  = "AUART4.RX",
+	 .id    = PINID_SSP3_MOSI,
+	 .fun   = PIN_FUN2,
+	 },
+	{
+	 .name  = "AUART4.TX",
+	 .id    = PINID_SSP3_SCK,
+	 .fun   = PIN_FUN2,
+	 },
+	{
+	 .name  = "AUART4.CTS",
+	 .id    = PINID_SSP3_SS0,
+	 .fun   = PIN_FUN2,
+	 },
+	{
+	 .name  = "AUART4.RTS",
+	 .id    = PINID_SSP3_MISO,
+	 .fun   = PIN_FUN2,
+	 },
+#endif
+	 {
 	 .name = "usb0",
 	 .id = PINID_AUART2_TX, /* Power enable pin*/
 	 .fun = PIN_GPIO,

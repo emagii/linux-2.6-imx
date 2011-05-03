@@ -1014,19 +1014,21 @@ static int __devinit mxs_auart_probe(struct platform_device *pdev)
 	}
 	s->port.irq = s->irq[0];
 
-	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
-	if (!r) {
-		ret = -ENXIO;
-		goto out_free_clk;
-	}
-	s->dma_rx_chan = r->start;
+	if (plat->dma_mode) {
+		r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+		if (!r) {
+			ret = -ENXIO;
+			goto out_free_clk;
+		}
+		s->dma_rx_chan = r->start;
 
-	r = platform_get_resource(pdev, IORESOURCE_DMA, 1);
-	if (!r) {
-		ret = -ENXIO;
-		goto out_free_clk;
+		r = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+		if (!r) {
+			ret = -ENXIO;
+			goto out_free_clk;
+		}
+		s->dma_tx_chan = r->start;
 	}
-	s->dma_tx_chan = r->start;
 
 	platform_set_drvdata(pdev, s);
 
