@@ -775,6 +775,39 @@ static int fec_enet_mdio_reset(struct mii_bus *bus)
 	return 0;
 }
 
+static int fec_phy_reset(struct fec_enet_private *fep)
+{
+	int err = 0;
+#ifdef CONFIG_MACH_MBA28
+	struct phy_device *phy_dev = fep->phy_dev;
+	int val;
+	int timeout = 100;
+
+	err = phy_write(phy_dev, MII_BMCR, BMCR_RESET);
+	if (err) {
+		netdev_err(fep->netdev, "can't reset PHY\n");
+		return err;
+	}
+
+	for (; timeout > 0; timeout--) {
+		udelay(100);
+		val = phy_read(phy_dev, MII_BMCR);
+		if (val == -1)
+			continue;
+
+		if (!(val & BMCR_RESET))
+			break;
+	}
+
+	if (!timeout) {
+		netdev_err(fep->netdev, "PHY Reset would not complete\n");
+		err = -ENODEV;
+	}
+#endif
+
+	return err;
+}
+
 static int fec_enet_mii_probe(struct net_device *dev)
 {
 	struct fec_enet_private *fep = netdev_priv(dev);
@@ -1039,7 +1072,7 @@ fec_enet_open(struct net_device *dev)
 	phy_start(fep->phy_dev);
 	fec_restart(dev, fep->phy_dev->duplex);
 	fep->opened = 1;
-	return 0;
+	return fec_phy_reset(fep);
 }
 
 static int
