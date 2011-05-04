@@ -278,7 +278,9 @@ static int __devinit mxs_ts_probe(struct platform_device *pdev)
 	}
 
 	idev->name = "MXS touchscreen";
-	idev->evbit[0] = BIT(EV_ABS);
+	idev->evbit[0] = BIT(EV_KEY) | BIT(EV_ABS);
+	idev->keybit[BIT_WORD(BTN_TOUCH)] |= BIT_MASK(BTN_TOUCH);
+
 	input_set_abs_params(idev, ABS_X, 0, 0xFFF, 0, 0);
 	input_set_abs_params(idev, ABS_Y, 0, 0xFFF, 0, 0);
 	input_set_abs_params(idev, ABS_PRESSURE, 0, 1, 0, 0);
