@@ -200,24 +200,6 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 
 #if defined(CONFIG_I2C_MXS) || \
 	defined(CONFIG_I2C_MXS_MODULE)
-#ifdef CONFIG_MACH_MBA28
-	{
-	 .name = "I2C1_SCL",
-	 .id = PINID_AUART2_CTS,
-	 .fun = PIN_FUN2,
-	 .strength = PAD_8MA,
-	 .voltage = PAD_3_3V,
-	 .drive	= 1,
-	 },
-	{
-	 .name = "I2C1_SDA",
-	 .id = PINID_AUART2_RTS,
-	 .fun = PIN_FUN2,
-	 .strength = PAD_8MA,
-	 .voltage = PAD_3_3V,
-	 .drive	= 1,
-	 },
-#else
 	{
 	 .name = "I2C0_SCL",
 	 .id = PINID_I2C0_SCL,
@@ -230,6 +212,24 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .name = "I2C0_SDA",
 	 .id = PINID_I2C0_SDA,
 	 .fun = PIN_FUN1,
+	 .strength = PAD_8MA,
+	 .voltage = PAD_3_3V,
+	 .drive	= 1,
+	 },
+
+#if defined(CONFIG_MACH_MBA28) && defined(CONFIG_I2C_MXS_SELECT1)
+	{
+	 .name = "I2C1_SCL",
+	 .id = PINID_AUART2_CTS,
+	 .fun = PIN_FUN2,
+	 .strength = PAD_8MA,
+	 .voltage = PAD_3_3V,
+	 .drive	= 1,
+	 },
+	{
+	 .name = "I2C1_SDA",
+	 .id = PINID_AUART2_RTS,
+	 .fun = PIN_FUN2,
 	 .strength = PAD_8MA,
 	 .voltage = PAD_3_3V,
 	 .drive	= 1,

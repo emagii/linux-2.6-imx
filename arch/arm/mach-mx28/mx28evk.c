@@ -24,6 +24,7 @@
 #include <linux/platform_device.h>
 #include <linux/i2c.h>
 #include <linux/i2c/at24.h>
+#include <linux/i2c/pca953x.h>
 
 #include <asm/setup.h>
 #include <asm/mach-types.h>
@@ -48,9 +49,19 @@ static struct at24_platform_data eeprom_info = {
 	.page_size      = 32,
 	.flags          = AT24_FLAG_ADDR16,
 };
+static struct pca953x_platform_data pca9554_info1 = {
+	.gpio_base      = -1,
+};
+static struct pca953x_platform_data pca9554_info2 = {
+	.gpio_base      = -1,
+};
 
 static struct i2c_board_info __initdata mxs_i2c_device[] = {
-	{ I2C_BOARD_INFO("24c64", 0x50), .platform_data  = &eeprom_info}
+	{ I2C_BOARD_INFO("24c64", 0x50), .platform_data  = &eeprom_info},
+	{ I2C_BOARD_INFO("lm73", 0x4a) },
+	{ I2C_BOARD_INFO("sgtl5000-i2c", 0xa), .flags = I2C_M_TEN },
+	{ I2C_BOARD_INFO("pca9554", 0x20), .platform_data = &pca9554_info1 },
+	{ I2C_BOARD_INFO("pca9554", 0x21), .platform_data = &pca9554_info2 },
 };
 
 static void __init i2c_device_init(void)
