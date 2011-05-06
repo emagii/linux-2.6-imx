@@ -1096,6 +1096,7 @@ static void __init mx28_init_ts(void)
 #if defined(CONFIG_CAN_FLEXCAN) || defined(CONFIG_CAN_FLEXCAN_MODULE)
 static void flexcan_xcvr_enable(int id, int en)
 {
+#ifndef CONFIG_MACH_MBA28
 	static int pwdn;
 	if (en) {
 		if (!pwdn++)
@@ -1104,6 +1105,7 @@ static void flexcan_xcvr_enable(int id, int en)
 		if (!--pwdn)
 			gpio_set_value(MXS_PIN_TO_GPIO(PINID_SSP1_CMD), 0);
 	}
+#endif
 }
 
 struct flexcan_platform_data flexcan_data[] = {

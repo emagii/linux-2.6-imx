@@ -183,6 +183,7 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .drive 	= 1,
 	 .pull 		= 0,
 	 },
+#ifndef CONFIG_MACH_MBA28
 	{
 	 .name	= "CAN_PWDN",
 	 .id	= PINID_SSP1_CMD,
@@ -195,6 +196,7 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .data		= 0,
 	 .output	= 1,
 	 },
+#endif
 
 #endif
 
