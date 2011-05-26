@@ -439,23 +439,23 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .voltage = PAD_3_3V,
 	 .drive	= 1,
 	 },
+#ifdef CONFIG_MACH_MBA28
 	{
 	 .name = "LCD_VSYNC",
-	 .id   = PINID_LCD_RD_E,
-	 .fun  = PIN_FUN2,
+	 .id   = PINID_LCD_VSYNC,
+	 .fun  = PIN_FUN1,
 	 .strength = PAD_8MA,
 	 .voltage = PAD_3_3V,
 	 .drive	= 1,
 	 },
 	{
 	 .name = "LCD_HSYNC",
-	 .id = PINID_LCD_WR_RWN,
-	 .fun = PIN_FUN2,
+	 .id = PINID_LCD_HSYNC,
+	 .fun = PIN_FUN1,
 	 .strength = PAD_8MA,
 	 .voltage = PAD_3_3V,
 	 .drive	= 1,
 	 },
-#ifdef CONFIG_MACH_MBA28
 	{
 	 .name = "LCD_ENABLE",
 	 .id = PINID_LCD_ENABLE,
@@ -473,6 +473,22 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .drive	= 1,
 	 },
 #else
+	{
+	 .name = "LCD_VSYNC",
+	 .id   = PINID_LCD_RD_E,
+	 .fun  = PIN_FUN2,
+	 .strength = PAD_8MA,
+	 .voltage = PAD_3_3V,
+	 .drive	= 1,
+	 },
+	{
+	 .name = "LCD_HSYNC",
+	 .id = PINID_LCD_WR_RWN,
+	 .fun = PIN_FUN2,
+	 .strength = PAD_8MA,
+	 .voltage = PAD_3_3V,
+	 .drive	= 1,
+	 },
 	{
 	 .name = "LCD_ENABLE",
 	 .id = PINID_LCD_CS,
