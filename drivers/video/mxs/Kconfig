@@ -18,6 +18,10 @@ config FB_MXS_LCD_FG0700
 	depends on FB_MXS
 	tristate "DATA IMAGE LCD WVGA(800x480) PANEL"
 
+config FB_MXS_LCD_ETQ570G0DH6
+	depends on FB_MXS
+	tristate "EMERGIG DISPLAY LCD QVGA(320x240) PANEL"
+
 config FB_MXS_LCD_LMS430
 	depends on FB_MXS
 	bool "LMS430"
