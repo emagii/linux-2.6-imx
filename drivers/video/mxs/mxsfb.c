@@ -204,9 +204,12 @@ static irqreturn_t lcd_irq_handler(int irq, void *dev_id)
 		wake_up_interruptible(&data->vsync_wait_q);
 	}
 	if (status_lcd & BM_LCDIF_CTRL1_CUR_FRAME_DONE_IRQ) {
+		struct mxs_platform_fb_entry *pentry = data->pdata->cur;
 		pr_debug("%s: frame done irq\n", __func__);
 		__raw_writel(BM_LCDIF_CTRL1_CUR_FRAME_DONE_IRQ,
 			     data->regbase + HW_LCDIF_CTRL1_CLR);
+		if (pentry->lcd_type == MXS_LCD_PANEL_VSYNC)
+			pentry->run_panel();
 		data->vsync_count++;
 	}
 	if (status_lcd & BM_LCDIF_CTRL1_UNDERFLOW_IRQ) {
