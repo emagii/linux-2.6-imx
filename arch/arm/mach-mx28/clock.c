@@ -1146,13 +1146,13 @@ static unsigned long lcdif_get_rate(struct clk *clk)
 
 static int lcdif_set_rate(struct clk *clk, unsigned long rate)
 {
+	struct clk *parent = clk->parent;
+	long parent_rate = parent->get_rate(clk->parent);
 	int reg_val;
-
-#ifdef CONFIG_FB_MXS_LCD_FG0700
-	int div = 15;
-#else
 	int div = 1;
-#endif
+
+	if (parent != &pll_clk[0])
+		div = (parent_rate + rate/2) / rate;
 
 	reg_val = __raw_readl(clk->scale_reg);
 	reg_val &= ~(BM_CLKCTRL_DIS_LCDIF_DIV | BM_CLKCTRL_DIS_LCDIF_CLKGATE);
@@ -1167,11 +1167,11 @@ static int lcdif_set_rate(struct clk *clk, unsigned long rate)
 			return -ETIMEDOUT;
 	}
 
-#ifndef CONFIG_FB_MXS_LCD_FG0700
-	reg_val = __raw_readl(CLKCTRL_BASE_ADDR + HW_CLKCTRL_CLKSEQ);
-	reg_val |= BM_CLKCTRL_CLKSEQ_BYPASS_DIS_LCDIF;
-	__raw_writel(reg_val, CLKCTRL_BASE_ADDR + HW_CLKCTRL_CLKSEQ);
-#endif
+	if (parent == &pll_clk[0]) {
+		reg_val = __raw_readl(CLKCTRL_BASE_ADDR + HW_CLKCTRL_CLKSEQ);
+		reg_val |= BM_CLKCTRL_CLKSEQ_BYPASS_DIS_LCDIF;
+		__raw_writel(reg_val, CLKCTRL_BASE_ADDR + HW_CLKCTRL_CLKSEQ);
+	}
 
 	return 0;
 }

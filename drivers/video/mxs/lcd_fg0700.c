@@ -79,7 +79,7 @@ static int init_panel(struct device *dev, dma_addr_t phys, int memsize,
 	if (ret)
 		goto out3;
 
-	ret = clk_set_rate(lcd_clk, 1000000 / pentry->cycle_time_ns);	/* kHz */
+	ret = clk_set_rate(lcd_clk, 1000000000 / pentry->cycle_time_ns);	/* kHz */
 	if (ret)
 		goto out3;
 
