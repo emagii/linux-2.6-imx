@@ -213,10 +213,21 @@ static void pca953x_setup_gpio(struct pca953x_chip *chip, int gpios)
 
 	gc->base = chip->gpio_start;
 	gc->ngpio = gpios;
-	gc->label = chip->client->name;
+	gc->label = kasprintf(GFP_KERNEL, "%s %d-%04x",
+				chip->client->name,
+				i2c_adapter_id(chip->client->adapter),
+				chip->client->addr);
 	gc->dev = &chip->client->dev;
 	gc->owner = THIS_MODULE;
 	gc->names = chip->names;
+}
+
+static void pca953x_kill_gpio(struct pca953x_chip *chip)
+{
+	struct gpio_chip *gc;
+
+	gc = &chip->gpio_chip;
+	kfree(gc->label);
 }
 
 #ifdef CONFIG_GPIO_PCA953X_IRQ
@@ -574,6 +585,8 @@ static int pca953x_remove(struct i2c_client *client)
 			return ret;
 		}
 	}
+
+	pca953x_kill_gpio(chip);
 
 	ret = gpiochip_remove(&chip->gpio_chip);
 	if (ret) {
