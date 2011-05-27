@@ -132,18 +132,23 @@ static void mx28_gpio_ack_irq(struct mxs_gpio_port *port, int pin)
 static struct mxs_gpio_port mx28_gpios[] = {
 	{
 	 .irq = IRQ_GPIO0,
+	 .port = { .label = "cpu gpio0" },
 	 },
 	{
 	 .irq = IRQ_GPIO1,
+	 .port = { .label = "cpu gpio1" },
 	 },
 	{
 	 .irq = IRQ_GPIO2,
+	 .port = { .label = "cpu gpio2" },
 	 },
 	{
 	 .irq = IRQ_GPIO3,
+	 .port = { .label = "cpu gpio3" },
 	 },
 	{
 	 .irq = IRQ_GPIO4,
+	 .port = { .label = "cpu gpio4" },
 	 },
 };
 
