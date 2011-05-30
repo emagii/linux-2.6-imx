@@ -258,6 +258,7 @@ int mxsfb_get_info(struct fb_var_screeninfo *var, struct fb_fix_screeninfo *fix)
 	*fix = cdata->info.fix;
 	return 0;
 }
+EXPORT_SYMBOL(mxsfb_get_info);
 
 void mxsfb_cfg_pxp(int enable, dma_addr_t pxp_phys)
 {
@@ -266,6 +267,7 @@ void mxsfb_cfg_pxp(int enable, dma_addr_t pxp_phys)
 	else
 		cdata->pdata->cur->pan_display(cdata->cur_phys);
 }
+EXPORT_SYMBOL(mxsfb_cfg_pxp);
 
 static int mxsfb_mmap(struct fb_info *info, struct vm_area_struct *vma)
 {
