@@ -703,8 +703,6 @@ static int __devinit mxsfb_probe(struct platform_device *pdev)
 			pdata->cur = pentry;
 		}
 	}
-	if (!default_panel_name || !pentry)
-		pentry = pdata->cur;
 	if (!pentry || !pentry->init_panel || !pentry->run_panel ||
 	    !pentry->release_panel) {
 		ret = -EINVAL;
