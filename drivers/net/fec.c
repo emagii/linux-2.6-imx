@@ -174,7 +174,7 @@ struct fec_enet_private {
 	struct bufdesc	*rx_bd_base;
 	struct bufdesc	*tx_bd_base;
 	/* The next free ring entry */
-	struct bufdesc	*cur_rx, *cur_tx; 
+	struct bufdesc	*cur_rx, *cur_tx;
 	/* The ring entries to be free()ed */
 	struct bufdesc	*dirty_tx;
 
@@ -669,6 +669,9 @@ static void fec_enet_adjust_link(struct net_device *dev)
 	unsigned long flags;
 
 	int status_change = 0;
+
+	if (!phy_dev)
+		return;
 
 	spin_lock_irqsave(&fep->hw_lock, flags);
 
