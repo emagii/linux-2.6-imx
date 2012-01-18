@@ -40,6 +40,9 @@
 		((((b) & MXS_PIN_BANK_MAX) << MXS_PIN_BANK_BIT) |\
 		 ((p) & MXS_PIN_PINID_MAX))
 
+#define MXS_PIN_TO_IRQ(bank,pin) \
+	(MXS_GPIO_IRQ_START + (bank * PINS_PER_BANK) + pin)
+
 #define MXS_GPIO_MASK		0x7FFFFFFF
 #define MXS_NON_GPIO		0x80000000
 /*

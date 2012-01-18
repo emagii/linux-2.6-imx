@@ -26,6 +26,7 @@
 #include <mach/pinctrl.h>
 
 #include "mx28_pins.h"
+#include "tqma28_pins.h"
 
 static struct pin_desc mx28evk_fixed_pins[] = {
 	{
@@ -218,7 +219,25 @@ static struct pin_desc mx28evk_fixed_pins[] = {
 	 .voltage = PAD_3_3V,
 	 .drive	= 1,
 	 },
-
+#if	defined(CONFIG_MACH_MBA28) && defined(CONFIG_TOUCHSCREEN_ATMEL_MXT)
+	 {
+	 .name		= "mxt_nreset",
+	 .id		= MXT_NRESET,
+	 .fun		= PIN_GPIO,
+	 .drive 	= 1,
+	   .strength	= PAD_4MA,
+	   .voltage	= PAD_3_3V,
+	 .pull 		= 0,
+	   .pullup	= 0,
+	 .output	= 1,
+	   .data		= 1,
+	 },
+	 {
+	 .name		= "mxt_nchange",
+	 .id		= MXT_NCHANGE,
+	 .fun		= PIN_GPIO,
+	 },
+#endif
 #if defined(CONFIG_MACH_MBA28) && defined(CONFIG_I2C_MXS_SELECT1)
 	{
 	 .name = "I2C1_SCL",
